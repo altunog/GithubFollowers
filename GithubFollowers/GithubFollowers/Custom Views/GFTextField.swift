@@ -26,7 +26,7 @@ class GFTextField: UITextField {
         layer.borderColor = UIColor.systemGray4.cgColor
         
         textColor = .label
-        tintColor = .label //blinking cursor color
+        tintColor = .secondaryLabel //blinking cursor color
         textAlignment = .center
         font = .preferredFont(forTextStyle: .title2)
         adjustsFontSizeToFitWidth = true
