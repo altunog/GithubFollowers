@@ -59,13 +59,13 @@ class FollowerListVC: UIViewController {
     }
     
     func getFollowers() {
-        NetworkManager.shared.getFollowers(for: username, page: 1) { result in
+        NetworkManager.shared.getFollowers(for: username, page: 1) { [weak self] result in
             switch result {
             case .success(let followers):
-                self.followers = followers
-                self.updateData()
+                self?.followers = followers
+                self?.updateData()
             case .failure(let error):
-                self.presentGFAlertOnMainThread(title: "Bad stuff happened", message: error.rawValue, buttonTitle: "Ok")
+                self?.presentGFAlertOnMainThread(title: "Bad stuff happened", message: error.rawValue, buttonTitle: "Ok")
             }
         }
     }
