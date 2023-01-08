@@ -15,6 +15,8 @@ class FollowerListVC: UIViewController {
     
     var username: String!
     var followers: [Follower] = []
+    var page = 1
+    var hasMoreFollowers = true
     
     var collectionView: UICollectionView!
     var dataSource: UICollectionViewDiffableDataSource<Section, Follower>!
@@ -40,6 +42,7 @@ class FollowerListVC: UIViewController {
     private func configureCollectionView() {
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: UIHelper.createThreeColumnFlowLayout(in: view))
         view.addSubview(collectionView)
+        collectionView.delegate = self
         collectionView.backgroundColor = .systemBackground
         collectionView.register(FollowerCell.self, forCellWithReuseIdentifier: FollowerCell.reuseID)
     }
@@ -47,10 +50,11 @@ class FollowerListVC: UIViewController {
     
     
     func getFollowers() {
-        NetworkManager.shared.getFollowers(for: username, page: 1) { [weak self] result in
+        NetworkManager.shared.getFollowers(for: self.username, page: self.page) { [weak self] result in
             switch result {
             case .success(let followers):
-                self?.followers = followers
+                if followers.count < 100 { self?.hasMoreFollowers = false }
+                self?.followers.append(contentsOf: followers)
                 self?.updateData()
             case .failure(let error):
                 self?.presentGFAlertOnMainThread(title: "Bad stuff happened", message: error.rawValue, buttonTitle: "Ok")
@@ -78,6 +82,24 @@ class FollowerListVC: UIViewController {
     
     deinit {
         print(#function)
+    }
+
+}
+
+
+extension FollowerListVC: UICollectionViewDelegate {
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        guard hasMoreFollowers else { return }
+        
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let height = scrollView.frame.height
+        
+        if offsetY + height >= contentHeight * 0.75 {
+            page += 1
+            getFollowers()
+        }
+        print("It worked")
     }
 
 }
