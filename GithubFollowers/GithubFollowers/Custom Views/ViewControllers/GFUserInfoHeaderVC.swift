@@ -16,7 +16,7 @@ class GFUserInfoHeaderVC: UIViewController {
     let locationLabel = GFSecondaryTitleLabel(fontSize: 18)
     let bioLabel = GFBodyLabel(textAlignment: .left)
     
-    var user: User
+    let user: User
     
     init(user: User) {
         self.user = user
