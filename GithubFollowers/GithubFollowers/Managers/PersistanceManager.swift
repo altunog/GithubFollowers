@@ -73,4 +73,10 @@ enum PersistanceManager {
             return .unableToFavorites
         }
     }
+    
+    
+    static func reset() {
+        UserDefaults.resetStandardUserDefaults()
+    }
+    
 }

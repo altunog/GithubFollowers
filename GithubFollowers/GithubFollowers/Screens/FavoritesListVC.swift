@@ -55,8 +55,8 @@ class FavoritesListVC: UIViewController {
                 } else {
                     self.favorites = favorites
                     DispatchQueue.main.async {
-                        self.tableView.reloadData()
                         self.view.bringSubviewToFront(self.tableView)
+                        self.tableView.reloadData()
                     }
                 }
                 
@@ -74,11 +74,41 @@ extension FavoritesListVC: UITableViewDelegate, UITableViewDataSource {
         return favorites.count
     }
     
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: FavoriteCell.reuseID) as! FavoriteCell
         let favorite = favorites[indexPath.row]
         cell.set(favorite: favorite)
         
         return cell
+    }
+    
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let favorite = favorites[indexPath.row]
+        let destVC = FollowerListVC()
+        destVC.username = favorite.login
+        destVC.title = favorite.login
+        
+        navigationController?.pushViewController(destVC, animated: true)
+    }
+    
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        guard editingStyle == .delete else { return }
+        
+        let favorite = favorites[indexPath.row]
+        favorites.remove(at: indexPath.row)
+        tableView.deleteRows(at: [indexPath], with: .left)
+        
+        PersistanceManager.updateWith(favorite: favorite, actionType: .remove) { [weak self] error in
+            guard let self else { return }
+            
+            if let error {
+                self.presentGFAlertOnMainThread(title: "Unable to remove", message: error.rawValue, buttonTitle: "OK")
+            }
+        }
+        
+        if favorites.isEmpty { PersistanceManager.reset() }
     }
 }
