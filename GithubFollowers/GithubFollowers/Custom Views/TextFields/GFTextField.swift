@@ -37,6 +37,7 @@ class GFTextField: UITextField {
         autocapitalizationType = .none
         returnKeyType = .go
         clearButtonMode = .whileEditing
+        spellCheckingType = .no
         placeholder = "Enter a username"
     }
 }
