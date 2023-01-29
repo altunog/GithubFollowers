@@ -97,8 +97,6 @@ class SearchVC: UIViewController {
         NSLayoutConstraint.activate([
             containerView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             containerView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            containerView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            containerView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             containerView.heightAnchor.constraint(equalTo: scrollView.heightAnchor),
             containerView.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
         ])
