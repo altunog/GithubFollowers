@@ -11,16 +11,16 @@ protocol UserInfoVCDelegate: AnyObject {
     func didRequestFollowers(for username: String)
 }
 
-class UserInfoVC: UIViewController {
+final class UserInfoVC: UIViewController {
     
-    let scrollView = UIScrollView()
-    let contentView = UIView()
+    private let scrollView = UIScrollView()
+    private let contentView = UIView()
 
-    let headerView = UIView()
-    let itemViewOne = UIView()
-    let itemViewTwo = UIView()
-    let dateLabel = GFBodyLabel(textAlignment: .center)
-    var itemViews: [UIView] = []
+    private let headerView = UIView()
+    private let itemViewOne = UIView()
+    private let itemViewTwo = UIView()
+    private let dateLabel = GFBodyLabel(textAlignment: .center)
+    private var itemViews: [UIView] = []
     
     var username: String!
     weak var delegate: UserInfoVCDelegate?
@@ -28,7 +28,6 @@ class UserInfoVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
         configureViewController()
         configureScrollView()
         layoutUI()
@@ -36,14 +35,15 @@ class UserInfoVC: UIViewController {
     }
     
     
-    func configureViewController() {
+    private func configureViewController() {
         view.backgroundColor = .systemBackground
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissVC))
         navigationItem.rightBarButtonItem = doneButton
     }
     
     
-    func getUserInfo() {
+    private func getUserInfo() {
+        
         NetworkManager.shared.getUserInfo(for: username) { [weak self] result in
             guard let self else { return }
             
@@ -58,7 +58,7 @@ class UserInfoVC: UIViewController {
     }
     
     
-    func configureUIElements(with user: User) {
+    private func configureUIElements(with user: User) {
         self.add(childVC: GFUserInfoHeaderVC(user: user), to: self.headerView)
         self.add(childVC: GFRepoItemVC(user: user, delegate: self), to: self.itemViewOne)
         self.add(childVC: GFFollowerItemVC(user: user, delegate: self), to: self.itemViewTwo)
@@ -66,7 +66,7 @@ class UserInfoVC: UIViewController {
     }
     
     
-    func configureScrollView() {
+    private func configureScrollView() {
         view.addSubview(scrollView)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -89,7 +89,7 @@ class UserInfoVC: UIViewController {
     }
     
     
-    func layoutUI() {
+    private func layoutUI() {
         let padding: CGFloat = 20
         
         itemViews = [headerView, itemViewOne, itemViewTwo, dateLabel]
@@ -120,14 +120,14 @@ class UserInfoVC: UIViewController {
     }
     
     
-    func add(childVC: UIViewController, to containerView: UIView) {
+    private func add(childVC: UIViewController, to containerView: UIView) {
         addChild(childVC)
         containerView.addSubview(childVC.view)
         childVC.view.frame = containerView.bounds
         childVC.didMove(toParent: self)
     }
     
-    @objc func dismissVC() {
+    @objc private func dismissVC() {
         dismiss(animated: true)
     }
 }
@@ -136,6 +136,7 @@ class UserInfoVC: UIViewController {
 extension UserInfoVC: GFRepoItemVCDelegate {
  
     func didTapGitHubProfile(for user: User) {
+        
         guard let url = URL(string: user.htmlUrl) else {
             presentGFAlertOnMainThread(title: "Invalid URL",
                                        message: "The url attached to this user is invalid.",
@@ -151,6 +152,7 @@ extension UserInfoVC: GFRepoItemVCDelegate {
 extension UserInfoVC: GFFollowerItemVCDelegate {
     
     func didTapGetFollowers(for user: User) {
+        
         guard user.followers != 0 else {
             presentGFAlertOnMainThread(title: "No followers",
                                        message: "This user has no followers. What a shame 😞",

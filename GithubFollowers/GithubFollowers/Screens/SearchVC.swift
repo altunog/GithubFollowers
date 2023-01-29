@@ -7,25 +7,25 @@
 
 import UIKit
 
-class SearchVC: UIViewController {
+final class SearchVC: UIViewController {
     
-    
-    let scrollView = UIScrollView()
-    let containerView = UIView()
+    private let scrollView = UIScrollView()
+    private let contentView = UIView()
 
-    let logoImageView = UIImageView()
-    let usernameTextField = GFTextField()
-    let callToActionButton = GFButton(backgroundColor: .systemGreen, title: "Get Followers")
+    private let logoImageView = UIImageView()
+    private let usernameTextField = GFTextField()
+    private let callToActionButton = GFButton(backgroundColor: .systemGreen, title: "Get Followers")
     
-    var isUsernameEntered: Bool {
+    private var isUsernameEntered: Bool {
         return !usernameTextField.text!.isEmpty
     }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         configureScrollView()
-        configureContainerView()
+        configureContentView()
         configureLogoImageView()
         configureTextField()
         configureCallToActionButton()
@@ -33,22 +33,26 @@ class SearchVC: UIViewController {
         registerForKeyboardNotifications()
     }
     
+    
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
 
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         usernameTextField.text = .none
         navigationController?.setNavigationBarHidden(true, animated: true)
     }
     
-    func createDismissKeyboardTapGesture() {
+    
+    private func createDismissKeyboardTapGesture() {
         let tap = UITapGestureRecognizer(target: view, action: #selector(view.endEditing))
         view.addGestureRecognizer(tap)
     }
     
-    func registerForKeyboardNotifications() {
+    
+    private func registerForKeyboardNotifications() {
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(keyboardWasShown(_:)),
                                                name: UIResponder.keyboardDidShowNotification,
@@ -59,7 +63,8 @@ class SearchVC: UIViewController {
                                                object: nil)
     }
     
-    @objc func keyboardWasShown(_ notificiation: NSNotification) {
+    
+    @objc private func keyboardWasShown(_ notificiation: NSNotification) {
         guard let info = notificiation.userInfo,
               let keyboardFrameValue = info[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue else { return }
         
@@ -71,13 +76,15 @@ class SearchVC: UIViewController {
         scrollView.scrollIndicatorInsets = contentInsets
     }
     
-    @objc func keyboardWillBeHidden(_ notification: NSNotification) {
+    
+    @objc private func keyboardWillBeHidden(_ notification: NSNotification) {
         let contentInsets = UIEdgeInsets.zero
         scrollView.contentInset = contentInsets
         scrollView.scrollIndicatorInsets = contentInsets
     }
     
-    func configureScrollView() {
+    
+    private func configureScrollView() {
         view.addSubview(scrollView)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.showsVerticalScrollIndicator = false
@@ -90,63 +97,71 @@ class SearchVC: UIViewController {
         ])
     }
     
-    func configureContainerView() {
-        scrollView.addSubview(containerView)
-        containerView.translatesAutoresizingMaskIntoConstraints = false
+    
+    private func configureContentView() {
+        scrollView.addSubview(contentView)
+        contentView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            containerView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            containerView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            containerView.heightAnchor.constraint(equalTo: scrollView.heightAnchor),
-            containerView.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            contentView.heightAnchor.constraint(equalTo: scrollView.heightAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
         ])
     }
     
-    func configureLogoImageView() {
-        containerView.addSubview(logoImageView)
+    
+    private func configureLogoImageView() {
+        contentView.addSubview(logoImageView)
         logoImageView.translatesAutoresizingMaskIntoConstraints = false
         logoImageView.image = Images.ghLogo
         
         NSLayoutConstraint.activate([
-            logoImageView.topAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.topAnchor, constant: 80),
-            logoImageView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            logoImageView.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 80),
+            logoImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             logoImageView.heightAnchor.constraint(equalToConstant: 200),
             logoImageView.widthAnchor.constraint(equalTo: logoImageView.heightAnchor, multiplier: 1.0)
         ])
     }
     
-    func configureTextField() {
-        containerView.addSubview(usernameTextField)
+    
+    private func configureTextField() {
+        contentView.addSubview(usernameTextField)
         usernameTextField.delegate = self
         
         NSLayoutConstraint.activate([
             usernameTextField.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 48),
-            usernameTextField.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 50),
-            usernameTextField.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -50),
+            usernameTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 50),
+            usernameTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -50),
             usernameTextField.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
     
-    func configureCallToActionButton() {
-        containerView.addSubview(callToActionButton)
+    
+    private func configureCallToActionButton() {
+        contentView.addSubview(callToActionButton)
         callToActionButton.addTarget(self, action: #selector(pushFollowerListVC), for: .touchUpInside)
         
         NSLayoutConstraint.activate([
-            callToActionButton.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -50),
-            callToActionButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 50),
-            callToActionButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -50),
+            callToActionButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -50),
+            callToActionButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 50),
+            callToActionButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -50),
             callToActionButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
     
-    @objc func pushFollowerListVC() {
+    
+    @objc private func pushFollowerListVC() {
+        
         guard isUsernameEntered else {
-            presentGFAlertOnMainThread(title: "Empty Username", message: "Please enter a username. We need to know who to look for 😀.", buttonTitle: "OK")
+            presentGFAlertOnMainThread(title: "Empty Username",
+                                       message: "Please enter a username. We need to know who to look for 😀.",
+                                       buttonTitle: "OK")
             return
         }
         
         usernameTextField.resignFirstResponder()
-        
+
         let followerListVC = FollowerListVC(username: usernameTextField.text!)
         navigationController?.pushViewController(followerListVC, animated: true)
     }
@@ -154,9 +169,11 @@ class SearchVC: UIViewController {
 }
 
 extension SearchVC: UITextFieldDelegate {
+    
     func textFieldDidBeginEditing(_ textField: UITextField) {
         usernameTextField.becomeFirstResponder()
     }
+    
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         pushFollowerListVC()

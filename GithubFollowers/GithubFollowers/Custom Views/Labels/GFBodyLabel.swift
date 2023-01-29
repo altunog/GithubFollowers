@@ -7,21 +7,24 @@
 
 import UIKit
 
-class GFBodyLabel: UILabel {
+final class GFBodyLabel: UILabel {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
     }
     
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
     
     convenience init(textAlignment: NSTextAlignment) {
         self.init(frame: .zero)
         self.textAlignment = textAlignment
     }
+    
     
     private func configure() {
         textColor = .secondaryLabel
@@ -29,7 +32,6 @@ class GFBodyLabel: UILabel {
         adjustsFontSizeToFitWidth = true
         minimumScaleFactor = 0.75
         adjustsFontForContentSizeCategory = true // dynamic type enabling
-        numberOfLines = 3
         lineBreakMode = .byTruncatingTail
         translatesAutoresizingMaskIntoConstraints = false
     }
