@@ -42,8 +42,15 @@ class GFDataLoadingVC: UIViewController {
     
     func showEmptyStateView(with message: String) {
         let emptyStateView = GFEmptyStateView(message: message)
-        emptyStateView.frame = view.frame
         view.addSubview(emptyStateView)
+        emptyStateView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            emptyStateView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            emptyStateView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            emptyStateView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            emptyStateView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
     }
 
 

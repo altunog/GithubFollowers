@@ -24,6 +24,7 @@ class FollowerListVC: GFDataLoadingVC {
     var hasMoreFollowers = true
     var isSearching = false
     
+    var searchController: UISearchController!
     var collectionView: UICollectionView!
     var dataSource: UICollectionViewDiffableDataSource<Section, Follower>!
     
@@ -65,11 +66,11 @@ class FollowerListVC: GFDataLoadingVC {
     }
     
     private func configureSearchController() {
-        let searchController = UISearchController()
+        searchController = UISearchController()
         searchController.searchBar.delegate = self
         searchController.searchResultsUpdater = self
         searchController.searchBar.placeholder = "Search for a username"
-        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.obscuresBackgroundDuringPresentation = false // not dimming the background when search is active
         navigationItem.hidesSearchBarWhenScrolling = false
         navigationItem.searchController = searchController
     }
