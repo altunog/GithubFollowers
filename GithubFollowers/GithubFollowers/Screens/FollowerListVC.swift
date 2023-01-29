@@ -23,6 +23,7 @@ class FollowerListVC: GFDataLoadingVC {
     var page = 1
     var hasMoreFollowers = true
     var isSearching = false
+    var isLoadingMoreFollowers = false
     
     var searchController: UISearchController!
     var collectionView: UICollectionView!
@@ -87,6 +88,8 @@ class FollowerListVC: GFDataLoadingVC {
     
     func getFollowers() {
         showLoadingView()
+        isLoadingMoreFollowers = true
+        
         NetworkManager.shared.getFollowers(for: self.username, page: self.page) { [weak self] result in
             guard let self else { return }
             self.dismissLoadingView()
@@ -106,6 +109,8 @@ class FollowerListVC: GFDataLoadingVC {
             case .failure(let error):
                 self.presentGFAlertOnMainThread(title: "Bad stuff happened", message: error.rawValue, buttonTitle: "Ok")
             }
+            
+            self.isLoadingMoreFollowers = false
         }
     }
     
@@ -165,7 +170,7 @@ class FollowerListVC: GFDataLoadingVC {
 
 extension FollowerListVC: UICollectionViewDelegate {
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        guard hasMoreFollowers else { return }
+        guard hasMoreFollowers, !isLoadingMoreFollowers else { return }
         
         let offsetY = scrollView.contentOffset.y
         let contentHeight = scrollView.contentSize.height
@@ -194,7 +199,8 @@ extension FollowerListVC: UICollectionViewDelegate {
 extension FollowerListVC: UISearchResultsUpdating, UISearchBarDelegate {
     func updateSearchResults(for searchController: UISearchController) {
         guard let filter = searchController.searchBar.text, !filter.isEmpty else {
-            updateData(on: self.followers)
+            filteredFollowers.removeAll()
+            updateData(on: followers)
             isSearching = false
             return
         }
@@ -219,7 +225,9 @@ extension FollowerListVC: FollowerListVCDelegate {
         page = 1
         followers.removeAll()
         filteredFollowers.removeAll()
-        collectionView.setContentOffset(.zero, animated: true)
+//        collectionView.scrollsToTop = true
+//        collectionView.setContentOffset(.zero, animated: true)
+        collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
         getFollowers()
     }
 }
