@@ -28,7 +28,9 @@ class GFBodyLabel: UILabel {
         font = .preferredFont(forTextStyle: .body)
         adjustsFontSizeToFitWidth = true
         minimumScaleFactor = 0.75
-        lineBreakMode = .byWordWrapping
+        adjustsFontForContentSizeCategory = true // dynamic type enabling
+        numberOfLines = 3
+        lineBreakMode = .byTruncatingTail
         translatesAutoresizingMaskIntoConstraints = false
     }
 }

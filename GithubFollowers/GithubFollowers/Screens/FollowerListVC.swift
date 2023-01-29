@@ -7,10 +7,6 @@
 
 import UIKit
 
-protocol FollowerListVCDelegate: AnyObject {
-    func didRequestFollowers(for username: String)
-}
-
 class FollowerListVC: GFDataLoadingVC {
 
     enum Section {
@@ -176,7 +172,7 @@ extension FollowerListVC: UICollectionViewDelegate {
         let contentHeight = scrollView.contentSize.height
         let height = scrollView.frame.height
         
-        if offsetY + height >= contentHeight {
+        if offsetY + height >= contentHeight * 0.90 {
             page += 1
             getFollowers()
         }
@@ -217,7 +213,7 @@ extension FollowerListVC: UISearchResultsUpdating, UISearchBarDelegate {
 }
 
 
-extension FollowerListVC: FollowerListVCDelegate {
+extension FollowerListVC: UserInfoVCDelegate {
     
     func didRequestFollowers(for username: String) {
         self.username = username
